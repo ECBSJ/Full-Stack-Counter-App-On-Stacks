@@ -162,7 +162,7 @@ export default function Home() {
 
         let userStxBalResult = await getStxBalance(userAddress)
         setStxBalance(Number(userStxBalResult?.balance!) / 1000000)
-      }, 15000)
+      }, 10000)
     } else {
       setConnected(false)
     }
@@ -178,7 +178,7 @@ export default function Home() {
         decrementTotal: decrementTotal!.length,
         mempoolTotal: mempoolTotal!.length
       })
-    }, 15000)
+    }, 10000)
   }, [connected])
 
   useEffect(() => {
