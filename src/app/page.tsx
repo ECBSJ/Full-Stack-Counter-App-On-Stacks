@@ -1,6 +1,12 @@
 "use client"
 
 import { getSupa, insertSupa, supabase } from "@/lib/data"
+import {
+  getStxBalance,
+  getTotalCount,
+  getUserCount,
+  getUserCountTokenBalance
+} from "@/lib/stacks-data"
 import { CountsSchema } from "@/types"
 import { createClient, StacksApiSocketClient } from "@stacks/blockchain-api-client"
 import { createApiKeyMiddleware, createFetchFn } from "@stacks/common"
@@ -16,12 +22,12 @@ import {
 } from "@stacks/transactions"
 import { useEffect, useState } from "react"
 
-const apiMiddleware = createApiKeyMiddleware({
-  apiKey: process.env.NEXT_PUBLIC_HIRO_API_KEY!
-})
+// const apiMiddleware = createApiKeyMiddleware({
+//   apiKey: process.env.NEXT_PUBLIC_HIRO_API_KEY!
+// })
 
 // Create a custom fetch function using your API key
-const customFetchFn = createFetchFn(apiMiddleware)
+// const customFetchFn = createFetchFn(apiMiddleware)
 
 const socketUrl = "https://api.mainnet.hiro.so"
 const sc = new StacksApiSocketClient({
@@ -135,70 +141,70 @@ export default function Home() {
     })
   }
 
-  async function getTotalCount() {
-    let result = await fetchCallReadOnlyFunction({
-      contractAddress,
-      contractName: "counter",
-      functionName: "get-global-count",
-      functionArgs: [],
-      network: "mainnet",
-      client: {
-        fetch: customFetchFn
-      },
-      senderAddress: "SP355B7SVQQCJMZJN73V05Z97MF3YFZH274Q3AZG6"
-    })
+  // async function getTotalCount() {
+  //   let result = await fetchCallReadOnlyFunction({
+  //     contractAddress,
+  //     contractName: "counter",
+  //     functionName: "get-global-count",
+  //     functionArgs: [],
+  //     network: "mainnet",
+  //     client: {
+  //       fetch: customFetchFn
+  //     },
+  //     senderAddress: "SP355B7SVQQCJMZJN73V05Z97MF3YFZH274Q3AZG6"
+  //   })
 
-    setGlobalCount(Number(cvToValue(result)))
-  }
+  //   setGlobalCount(Number(cvToValue(result)))
+  // }
 
-  async function getUserCount() {
-    let result = await fetchCallReadOnlyFunction({
-      contractAddress,
-      contractName: "counter",
-      functionName: "get-user-count",
-      functionArgs: [Cl.standardPrincipal(userAddress)],
-      network: "mainnet",
-      client: {
-        fetch: customFetchFn
-      },
-      senderAddress: userAddress
-    })
+  // async function getUserCount() {
+  //   let result = await fetchCallReadOnlyFunction({
+  //     contractAddress,
+  //     contractName: "counter",
+  //     functionName: "get-user-count",
+  //     functionArgs: [Cl.standardPrincipal(userAddress)],
+  //     network: "mainnet",
+  //     client: {
+  //       fetch: customFetchFn
+  //     },
+  //     senderAddress: userAddress
+  //   })
 
-    setUserCount(Number(cvToValue(result)))
-  }
+  //   setUserCount(Number(cvToValue(result)))
+  // }
 
-  async function getUserCountTokenBalance() {
-    let result = await fetchCallReadOnlyFunction({
-      contractAddress,
-      contractName: "count-token",
-      functionName: "get-balance",
-      functionArgs: [Cl.standardPrincipal(userAddress)],
-      network: "mainnet",
-      client: {
-        fetch: customFetchFn
-      },
-      senderAddress: userAddress
-    })
+  // async function getUserCountTokenBalance() {
+  //   let result = await fetchCallReadOnlyFunction({
+  //     contractAddress,
+  //     contractName: "count-token",
+  //     functionName: "get-balance",
+  //     functionArgs: [Cl.standardPrincipal(userAddress)],
+  //     network: "mainnet",
+  //     client: {
+  //       fetch: customFetchFn
+  //     },
+  //     senderAddress: userAddress
+  //   })
 
-    setCountBalance(parseFloat(cvToValue(result).value!))
-  }
+  //   setCountBalance(parseFloat(cvToValue(result).value!))
+  // }
 
-  const client = createClient({
-    baseUrl: "https://api.mainnet.hiro.so"
-  })
+  // const client = createClient({
+  //   baseUrl: "https://api.mainnet.hiro.so"
+  // })
 
-  async function getStxBalance() {
-    const { data } = await client.GET("/extended/v1/address/{principal}/stx", {
-      params: {
-        path: { principal: userAddress }
-      },
-      headers: {
-        "x-api-key": process.env.NEXT_PUBLIC_HIRO_API_KEY!
-      }
-    })
+  // async function getStxBalance() {
+  //   const { data } = await client.GET("/extended/v1/address/{principal}/stx", {
+  //     params: {
+  //       path: { principal: userAddress }
+  //     },
+  //     headers: {
+  //       "x-api-key": process.env.NEXT_PUBLIC_HIRO_API_KEY!
+  //     }
+  //   })
 
-    setStxBalance(Number(data?.balance!) / 1000000)
-  }
+  //   setStxBalance(Number(data?.balance!) / 1000000)
+  // }
 
   function connectWallet() {
     showConnect({
@@ -222,17 +228,23 @@ export default function Home() {
   useEffect(() => {
     if (userSession.isUserSignedIn()) {
       setConnected(true)
-      setInterval(() => {
-        getUserCount()
-        getUserCountTokenBalance()
-        getStxBalance()
+      setInterval(async () => {
+        let userCountResult = await getUserCount(userAddress)
+        setUserCount(Number(cvToValue(userCountResult)))
+
+        let userCountBalResult = await getUserCountTokenBalance(userAddress)
+        setCountBalance(parseFloat(cvToValue(userCountBalResult).value!))
+
+        let userStxBalResult = await getStxBalance(userAddress)
+        setStxBalance(Number(userStxBalResult?.balance!) / 1000000)
       }, 3000)
     } else {
       setConnected(false)
     }
 
     setInterval(async () => {
-      getTotalCount()
+      let result = await getTotalCount()
+      setGlobalCount(Number(cvToValue(result)))
 
       let { incrementTotal, decrementTotal, mempoolTotal } = await getSupa()
 
