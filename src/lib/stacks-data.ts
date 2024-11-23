@@ -55,8 +55,6 @@ export async function getUserCountTokenBalance(userAddress: string) {
     senderAddress: userAddress
   })
 
-  console.log("serveeeee", result)
-
   return result
 }
 
