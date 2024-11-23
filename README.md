@@ -4,7 +4,7 @@ This is a full-stack counter app built with Next.js on the front-end and with Cl
 
 This repo is only pertaining to the front-end client app. For the Clarinet project repo, which includes the smart contracts, go here.
 
-This repo is part of a full end-to-end tutorial published on Hiro's Youtube channel.
+This repo is part of a full end-to-end [tutorial](https://youtu.be/Z9JQU_sOQLQ) published on Hiro's Youtube channel.
 
 ## Steps
 
