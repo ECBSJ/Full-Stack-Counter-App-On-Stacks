@@ -47,7 +47,7 @@ export default function Home() {
     userAddress = userSession.loadUserData().profile.stxAddress.mainnet
   }
 
-  const contractAddress = "SP355B7SVQQCJMZJN73V05Z97MF3YFZH274Q3AZG6"
+  const contractAddress = "SP3TJMRQ13QR6V5HGT6AKEK7PP699F4148JZTB9G3"
 
   function callIncrement() {
     openContractCall({
@@ -90,8 +90,8 @@ export default function Home() {
     postCondition =
       countBalance >= 1
         ? Pc.principal(userAddress)
-            .willSendEq(1)
-            .ft("SP355B7SVQQCJMZJN73V05Z97MF3YFZH274Q3AZG6.count-token", "count-token")
+            .willSendEq(1000000)
+            .ft("SP3TJMRQ13QR6V5HGT6AKEK7PP699F4148JZTB9G3.count-token", "count-token")
         : Pc.principal(userAddress).willSendEq(1000000).ustx()
   }
 
@@ -158,11 +158,11 @@ export default function Home() {
         setUserCount(Number(cvToValue(userCountResult)))
 
         let userCountBalResult = await getUserCountTokenBalance(userAddress)
-        setCountBalance(parseFloat(cvToValue(userCountBalResult).value!))
+        setCountBalance(parseFloat(cvToValue(userCountBalResult).value!) / 1000000)
 
         let userStxBalResult = await getStxBalance(userAddress)
         setStxBalance(Number(userStxBalResult?.balance!) / 1000000)
-      }, 10000)
+      }, 5000)
     } else {
       setConnected(false)
     }
@@ -178,7 +178,7 @@ export default function Home() {
         decrementTotal: decrementTotal!.length,
         mempoolTotal: mempoolTotal!.length
       })
-    }, 10000)
+    }, 5000)
   }, [connected])
 
   useEffect(() => {

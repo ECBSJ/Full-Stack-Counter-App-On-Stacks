@@ -36,8 +36,6 @@ export async function getSupa() {
 export async function insertSupa(insertData: CountsSchema) {
   const { data, error } = await supabase.from("counter").insert([insertData]).select()
 
-  console.log("Inserted!", data)
-
   return data
 }
 
@@ -51,7 +49,11 @@ export async function updateSupa(updateData: CountsSchema) {
     .eq("transaction", updateData.transaction)
     .select()
 
-  console.log("Updated!", data)
-
   return data
+}
+
+export async function deleteSupa(txid: string) {
+  const { error } = await supabase.from("counter").delete().eq("transaction", txid)
+
+  return true
 }

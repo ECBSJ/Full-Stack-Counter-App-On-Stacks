@@ -4,7 +4,7 @@ import { createClient } from "@stacks/blockchain-api-client"
 import { createApiKeyMiddleware, createFetchFn } from "@stacks/common"
 import { Cl, fetchCallReadOnlyFunction } from "@stacks/transactions"
 
-const contractAddress = "SP355B7SVQQCJMZJN73V05Z97MF3YFZH274Q3AZG6"
+const contractAddress = "SP3TJMRQ13QR6V5HGT6AKEK7PP699F4148JZTB9G3"
 const apiMiddleware = createApiKeyMiddleware({
   apiKey: process.env.NEXT_PUBLIC_HIRO_API_KEY!
 })
@@ -20,7 +20,7 @@ export async function getTotalCount() {
     client: {
       fetch: customFetchFn
     },
-    senderAddress: "SP355B7SVQQCJMZJN73V05Z97MF3YFZH274Q3AZG6"
+    senderAddress: "SP3TJMRQ13QR6V5HGT6AKEK7PP699F4148JZTB9G3"
   })
 
   return result
